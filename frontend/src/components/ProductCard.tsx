@@ -1,16 +1,28 @@
 import {
   Box,
+  Button,
   Heading,
   HStack,
   IconButton,
   Image,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Text,
   useColorModeValue,
+  useDisclosure,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
 import type { Product } from "../types/product.type";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { useProductStore } from "../store/product";
+import { useState } from "react";
 
 interface ProductCardProps {
   product: Product;
@@ -18,6 +30,12 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { deleteProduct } = useProductStore();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [updateProductForm, setUpdateProductForm] = useState({
+    name: product.name,
+    price: product.price,
+    image: product.image,
+  });
 
   const toast = useToast();
 
@@ -73,6 +91,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             icon={<EditIcon />}
             colorScheme="blue"
             aria-label={"edit"}
+            onClick={onOpen}
           />
           <IconButton
             icon={<DeleteIcon />}
@@ -82,6 +101,57 @@ export default function ProductCard({ product }: ProductCardProps) {
           />
         </HStack>
       </Box>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Update product</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack spacing={4}>
+              <Input
+                placeholder="Product Name"
+                value={updateProductForm.name}
+                onChange={(formValue) =>
+                  setUpdateProductForm({
+                    ...updateProductForm,
+                    name: formValue.target.value,
+                  })
+                }
+              />
+              <Input
+                placeholder="Product Price"
+                type="number"
+                value={updateProductForm.price}
+                onChange={(formValue) =>
+                  setUpdateProductForm({
+                    ...updateProductForm,
+                    price: Number(formValue.target.value),
+                  })
+                }
+              />
+              <Input
+                placeholder="Product Image URL"
+                value={updateProductForm.image}
+                onChange={(formValue) =>
+                  setUpdateProductForm({
+                    ...updateProductForm,
+                    image: formValue.target.value,
+                  })
+                }
+              />
+            </VStack>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3}>
+              Update
+            </Button>
+            <Button variant={"ghost"} onClick={onClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }

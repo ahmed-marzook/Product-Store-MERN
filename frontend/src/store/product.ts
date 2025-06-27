@@ -21,6 +21,8 @@ interface ProductStore {
   products: Product[];
   setProducts: (products: Product[]) => void;
   createProduct: (newProduct: Product) => Promise<ProductCreateResult>;
+  fetchProducts: () => Promise<ProductCreateResult>;
+  deleteProduct: (id: string | undefined) => Promise<ProductCreateResult>;
 }
 export const useProductStore = create<ProductStore>((set) => ({
   products: [] as Product[],
@@ -81,7 +83,9 @@ export const useProductStore = create<ProductStore>((set) => ({
       return { success: false, message: "Network error: " + error.message };
     }
   },
-  deleteProduct: async (id: string): Promise<ProductCreateResult> => {
+  deleteProduct: async (
+    id: string | undefined
+  ): Promise<ProductCreateResult> => {
     try {
       const res = await fetch(`/api/products/${id}`, {
         method: "DELETE",
