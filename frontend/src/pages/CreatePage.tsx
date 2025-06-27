@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { useProductStore } from "../store/product";
 import type { Product } from "../types/product.type";
+import { toast } from "react-toastify";
 
 export default function CreatePage() {
   const { createProduct } = useProductStore();
@@ -25,6 +26,11 @@ export default function CreatePage() {
     };
     const { success, message } = await createProduct(newProduct);
     console.log("Product:", newProduct);
+    if (success) {
+      toast.success(`Added new product: ${newProduct.name}`);
+    } else {
+      toast.error("Failed to insert new product: " + message);
+    }
   }
 
   return (
