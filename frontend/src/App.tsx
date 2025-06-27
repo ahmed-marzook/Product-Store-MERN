@@ -4,7 +4,6 @@ import { Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import CreatePage from "./pages/CreatePage";
 import Navbar from "./components/Navbar";
-import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -16,7 +15,6 @@ function App() {
           <Route path="/create" element={<CreatePage />} />
         </Routes>
       </Box>
-      <ToastContainer autoClose={2000} closeOnClick draggable />
     </>
   );
 }

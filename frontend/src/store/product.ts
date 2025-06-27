@@ -49,7 +49,7 @@ export const useProductStore = create<ProductStore>((set) => ({
         set((state) => ({
           products: [...state.products, data.data],
         }));
-        return { success: true };
+        return { success: true, message: "New product added" };
       } else {
         return { success: false, message: "Server error" };
       }

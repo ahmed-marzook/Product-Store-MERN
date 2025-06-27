@@ -9,15 +9,15 @@ import {
   InputGroup,
   InputLeftAddon,
   useColorModeValue,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
 import { useProductStore } from "../store/product";
 import type { Product } from "../types/product.type";
-import { toast } from "react-toastify";
 
 export default function CreatePage() {
   const { createProduct } = useProductStore();
-
+  const toast = useToast();
   async function registerForm(formData: FormData) {
     const newProduct: Product = {
       name: formData.get("name") as string,
@@ -27,9 +27,19 @@ export default function CreatePage() {
     const { success, message } = await createProduct(newProduct);
     console.log("Product:", newProduct);
     if (success) {
-      toast.success(`Added new product: ${newProduct.name}`);
+      toast({
+        title: "Success",
+        description: message,
+        status: "success",
+        isClosable: true,
+      });
     } else {
-      toast.error("Failed to insert new product: " + message);
+      toast({
+        title: "Error",
+        description: message,
+        status: "error",
+        isClosable: true,
+      });
     }
   }
 
