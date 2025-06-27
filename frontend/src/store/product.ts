@@ -7,6 +7,11 @@ interface ProductCreateResponse {
   data: Product;
 }
 
+interface ProductGetAllResponse {
+  success: boolean;
+  data: Product[];
+}
+
 interface ProductCreateResult {
   success: boolean;
   message?: string;
@@ -18,7 +23,7 @@ interface ProductStore {
   createProduct: (newProduct: Product) => Promise<ProductCreateResult>;
 }
 export const useProductStore = create<ProductStore>((set) => ({
-  products: [],
+  products: [] as Product[],
   setProducts: (products: Product[]) => set({ products }),
   createProduct: async (newProduct: Product): Promise<ProductCreateResult> => {
     // Validation
@@ -50,6 +55,25 @@ export const useProductStore = create<ProductStore>((set) => ({
           products: [...state.products, data.data],
         }));
         return { success: true, message: "New product added" };
+      } else {
+        return { success: false, message: "Server error" };
+      }
+    } catch (error: Error | any) {
+      return { success: false, message: "Network error: " + error.message };
+    }
+  },
+  fetchProducts: async () => {
+    try {
+      const res = await fetch("/api/products");
+
+      if (!res.ok) {
+        return { success: false, message: "Failed to fetch all products" };
+      }
+
+      const data: ProductGetAllResponse = await res.json();
+      if (data.success) {
+        set({ products: data.data });
+        return { success: true, message: "Fetched all products" };
       } else {
         return { success: false, message: "Server error" };
       }
