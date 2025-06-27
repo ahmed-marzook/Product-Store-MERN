@@ -6,6 +6,7 @@ import {
   Image,
   Text,
   useColorModeValue,
+  useToast,
 } from "@chakra-ui/react";
 import type { Product } from "../types/product.type";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
@@ -17,6 +18,27 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { deleteProduct } = useProductStore();
+
+  const toast = useToast();
+
+  async function handleDeleteProduct() {
+    const { success, message } = await deleteProduct(product._id);
+    if (success) {
+      toast({
+        title: "Product Deleted",
+        description: message,
+        status: "success",
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: message || "Failed to delete product",
+        status: "error",
+        isClosable: true,
+      });
+    }
+  }
 
   return (
     <Box
@@ -56,7 +78,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             icon={<DeleteIcon />}
             colorScheme="red"
             aria-label={"delete"}
-            onClick={() => deleteProduct(product._id)}
+            onClick={handleDeleteProduct}
           />
         </HStack>
       </Box>
