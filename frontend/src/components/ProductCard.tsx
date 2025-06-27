@@ -49,8 +49,8 @@ export default function ProductCard({ product }: ProductCardProps) {
     const response = await updateProduct(updatedProduct, product._id);
     if (response.success) {
       toast({
-        title: "Product Updated",
-        description: response.message,
+        title: "Success",
+        description: "Product updated successfully",
         status: "success",
         isClosable: true,
       });
