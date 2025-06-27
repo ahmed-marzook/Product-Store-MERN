@@ -141,7 +141,7 @@ export const useProductStore = create<ProductStore>((set) => ({
       if (data.success) {
         set((state) => ({
           products: state.products.map((product) =>
-            product._id === updatedProduct._id ? updatedProduct : product
+            product._id === id ? updatedProduct : product
           ),
         }));
         return { success: true, message: data.message || "Product updated" };
