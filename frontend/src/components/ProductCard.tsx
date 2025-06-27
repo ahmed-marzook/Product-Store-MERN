@@ -9,12 +9,15 @@ import {
 } from "@chakra-ui/react";
 import type { Product } from "../types/product.type";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { useProductStore } from "../store/product";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { deleteProduct } = useProductStore();
+
   return (
     <Box
       shadow={"lg"}
@@ -53,6 +56,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             icon={<DeleteIcon />}
             colorScheme="red"
             aria-label={"delete"}
+            onClick={() => deleteProduct(product._id)}
           />
         </HStack>
       </Box>

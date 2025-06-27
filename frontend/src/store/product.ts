@@ -62,7 +62,7 @@ export const useProductStore = create<ProductStore>((set) => ({
       return { success: false, message: "Network error: " + error.message };
     }
   },
-  fetchProducts: async () => {
+  fetchProducts: async (): Promise<ProductCreateResult> => {
     try {
       const res = await fetch("/api/products");
 
@@ -76,6 +76,29 @@ export const useProductStore = create<ProductStore>((set) => ({
         return { success: true, message: "Fetched all products" };
       } else {
         return { success: false, message: "Server error" };
+      }
+    } catch (error: Error | any) {
+      return { success: false, message: "Network error: " + error.message };
+    }
+  },
+  deleteProduct: async (id: string): Promise<ProductCreateResult> => {
+    try {
+      const res = await fetch(`/api/products/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        return { success: false, message: "Failed to delete product" };
+      }
+
+      const data: ProductCreateResult = await res.json();
+      if (data.success) {
+        set((state) => ({
+          products: state.products.filter((product) => product._id !== id),
+        }));
+        return { success: true, message: data.message };
+      } else {
+        return { success: false, message: "Server Error: " + data.message };
       }
     } catch (error: Error | any) {
       return { success: false, message: "Network error: " + error.message };

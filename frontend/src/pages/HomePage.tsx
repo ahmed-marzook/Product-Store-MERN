@@ -11,8 +11,6 @@ export default function HomePage() {
     fetchProducts();
   }, [fetchProducts]);
 
-  console.log(products);
-
   return (
     <Container maxW="container.xl" py={12}>
       <VStack>
@@ -46,7 +44,7 @@ export default function HomePage() {
         )}
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10} w={"full"}>
           {products.map((product) => (
-            <ProductCard key={product.id} product={product}></ProductCard>
+            <ProductCard key={product._id} product={product}></ProductCard>
           ))}
         </SimpleGrid>
       </VStack>
