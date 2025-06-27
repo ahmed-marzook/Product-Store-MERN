@@ -1,5 +1,6 @@
 import { create } from "zustand";
 
+import { Product } from "./../types/product.type";
 import type { Product } from "../types/product.type";
 
 interface ProductCreateResponse {
@@ -23,6 +24,10 @@ interface ProductStore {
   createProduct: (newProduct: Product) => Promise<ProductCreateResult>;
   fetchProducts: () => Promise<ProductCreateResult>;
   deleteProduct: (id: string | undefined) => Promise<ProductCreateResult>;
+  updateProduct: (
+    updatedProduct: Product,
+    id: string | undefined
+  ) => Promise<ProductCreateResult>;
 }
 export const useProductStore = create<ProductStore>((set) => ({
   products: [] as Product[],
@@ -103,6 +108,48 @@ export const useProductStore = create<ProductStore>((set) => ({
         return { success: true, message: data.message };
       } else {
         return { success: false, message: "Server Error: " + data.message };
+      }
+    } catch (error: Error | any) {
+      return { success: false, message: "Network error: " + error.message };
+    }
+  },
+  updateProduct: async (
+    updatedProduct: Product,
+    id: string | undefined
+  ): Promise<ProductCreateResult> => {
+    if (
+      updatedProduct.name.trim() === "" ||
+      updatedProduct.price <= 0 ||
+      !updatedProduct.image
+    ) {
+      return { success: false, message: "Invalid product data" };
+    }
+    try {
+      const res = await fetch(`/api/products/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedProduct),
+      });
+
+      if (!res.ok) {
+        return { success: false, message: "Failed to update product" };
+      }
+
+      const data: ProductCreateResult = await res.json();
+      if (data.success) {
+        set((state) => ({
+          products: state.products.map((product) =>
+            product._id === updatedProduct._id ? updatedProduct : product
+          ),
+        }));
+        return { success: true, message: data.message || "Product updated" };
+      } else {
+        return {
+          success: false,
+          message: "Server Error: " + (data.message || ""),
+        };
       }
     } catch (error: Error | any) {
       return { success: false, message: "Network error: " + error.message };

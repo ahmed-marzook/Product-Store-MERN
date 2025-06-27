@@ -29,7 +29,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const { deleteProduct } = useProductStore();
+  const { deleteProduct, updateProduct } = useProductStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [updateProductForm, setUpdateProductForm] = useState({
     name: product.name,
@@ -38,6 +38,33 @@ export default function ProductCard({ product }: ProductCardProps) {
   });
 
   const toast = useToast();
+
+  async function handleUpdate() {
+    const updatedProduct: Product = {
+      name: updateProductForm.name,
+      price: updateProductForm.price,
+      image: updateProductForm.image,
+    };
+
+    const response = await updateProduct(updatedProduct, product._id);
+    if (response.success) {
+      toast({
+        title: "Product Updated",
+        description: response.message,
+        status: "success",
+        isClosable: true,
+      });
+      onClose();
+    } else {
+      toast({
+        title: "Error",
+        description: response.message || "Failed to update product",
+        status: "error",
+        isClosable: true,
+      });
+    }
+    onClose();
+  }
 
   async function handleDeleteProduct() {
     const { success, message } = await deleteProduct(product._id);
@@ -143,7 +170,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3}>
+            <Button colorScheme="blue" mr={3} onClick={handleUpdate}>
               Update
             </Button>
             <Button variant={"ghost"} onClick={onClose}>
